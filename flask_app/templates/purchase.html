@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purchase Crops</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+  <div class="max-w-7xl mx-auto p-6 space-y-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-gray-800">Purchase Crops</h1>
+      <div class="flex items-center gap-4">
+        <a href="/cart" class="flex items-center" aria-label="View Cart">
+          <i data-lucide="shopping-cart" class="w-6 h-6 text-blue-600"></i>
+          <span class="ml-2 text-blue-600 hover:underline">View Cart</span>
+        </a>
+        <a href="/buyer_dashboard" class="text-blue-600 hover:underline">Back to Dashboard</a>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    {% if error %}
+      <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg">
+        <p>{{ error }}</p>
+      </div>
+    {% endif %}
+    {% if message %}
+      <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg">
+        <p>{{ message }}</p>
+      </div>
+    {% endif %}
+
+    <!-- Buyer Requirements Table -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Requirements</h2>
+      {% if requirements %}
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-200 text-gray-700">
+                <th class="p-3">Requirement ID</th>
+                <th class="p-3">Crop</th>
+                <th class="p-3">Quantity</th>
+                <th class="p-3">Unit</th>
+                <th class="p-3">Min Price</th>
+                <th class="p-3">Max Price</th>
+                <th class="p-3">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for req in requirements %}
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">{{ req[0] }}</td>
+                  <td class="p-3">{{ req[1] }}</td>
+                  <td class="p-3">{{ req[2] }}</td>
+                  <td class="p-3">{{ req[3] }}</td>
+                  <td class="p-3">${{ req[4] | float | round(2) }}</td>
+                  <td class="p-3">${{ req[5] | float | round(2) }}</td>
+                  <td class="p-3 flex gap-2">
+                    <button onclick="fetchSales({{ req[0] | safe }})" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 flex items-center gap-1">
+                      <i data-lucide="search" class="w-4 h-4"></i>
+                      Fetch Sales
+                    </button>
+                    <form action="/delete_requirement/{{ req[0] }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this requirement?');">
+                      <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 flex items-center gap-1">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <!-- Sales Table Placeholder -->
+                <tr id="sales-{{ req[0] }}" class="hidden">
+                  <td colspan="7" class="p-3">
+                    <div class="ml-6 bg-gray-50 p-4 rounded-lg">
+                      <h3 class="text-lg font-medium text-gray-800 mb-2">Matching Sales</h3>
+                      <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                          <thead>
+                            <tr class="bg-gray-100 text-gray-700">
+                              <th class="p-2">Sale ID</th>
+                              <th class="p-2">Crop</th>
+                              <th class="p-2">Farmer</th>
+                              <th class="p-2">Quantity Available</th>
+                              <th class="p-2">Unit</th>
+                              <th class="p-2">Price</th>
+                              <th class="p-2">Quantity to Buy</th>
+                              <th class="p-2">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody id="sales-table-{{ req[0] }}"></tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-gray-600">No requirements found. Add a new requirement below.</p>
+      {% endif %}
+    </div>
+
+    <!-- Add Requirement Form -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Add New Requirement</h2>
+      <form action="/purchase" method="POST" class="space-y-4">
+        <input type="hidden" name="action" value="add_requirement">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-gray-700 font-medium mb-1">Crop</label>
+            <select name="crop_id" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+              <option value="">Select a crop</option>
+              {% for crop in crops %}
+                <option value="{{ crop[0] }}">{{ crop[1] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1">Quantity</label>
+            <input type="number" step="0.01" name="quantity" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter quantity" required>
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1">Unit</label>
+            <input type="text" name="unit" value="Kg" class="w-full p-2 border rounded bg-gray-100 cursor-not-allowed" readonly>
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1">Minimum Price ($)</label>
+            <input type="number" step="0.01" name="min_price" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter minimum price" required>
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1">Maximum Price ($)</label>
+            <input type="number" step="0.01" name="max_price" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter maximum price" required>
+          </div>
+        </div>
+        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 flex items-center justify-center gap-2">
+          <i data-lucide="plus" class="w-5 h-5"></i>
+          Add Requirement
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Fetch sales for a requirement
+    function fetchSales(requiredId) {
+      console.log(`Fetching sales for requiredId=${requiredId}`);
+      const salesRow = document.getElementById(`sales-${requiredId}`);
+      const salesTableBody = document.getElementById(`sales-table-${requiredId}`);
+
+      // Toggle visibility
+      if (salesRow.classList.contains('hidden')) {
+        $.ajax({
+          url: `/fetch_sales/${requiredId}`,
+          method: 'GET',
+          success: function(data) {
+            console.log('Fetch sales response:', data);
+            if (data.error) {
+              alert(`Error: ${data.error}`);
+              return;
+            }
+            salesTableBody.innerHTML = '';
+            if (data.sales.length === 0) {
+              salesTableBody.innerHTML = '<tr><td colspan="8" class="p-2 text-gray-600">No matching sales found.</td></tr>';
+            } else {
+              data.sales.forEach(sale => {
+                // Escape special characters
+                const escapedCropName = sale.crop_name.replace(/'/g, "\\'");
+                const escapedFarmerName = sale.farmer_name.replace(/'/g, "\\'");
+                const row = `
+                  <tr class="border-b hover:bg-gray-50">
+                    <td class="p-2">${sale.sale_id}</td>
+                    <td class="p-2">${sale.crop_name}</td>
+                    <td class="p-2">${sale.farmer_name}</td>
+                    <td class="p-2">${sale.quantity_selling}</td>
+                    <td class="p-2">${sale.unit}</td>
+                    <td class="p-2">$${parseFloat(sale.amount_of_sale).toFixed(2)}</td>
+                    <td class="p-2">
+                      <input type="number" step="0.01" id="quantity-${sale.sale_id}" class="w-24 p-1 border rounded" placeholder="Quantity" min="0" max="${sale.quantity_selling}" required>
+                    </td>
+                    <td class="p-2">
+                      <button onclick="addToCart(${sale.sale_id}, ${requiredId}, ${sale.crop_id}, '${escapedCropName}', ${sale.farmer_id}, '${escapedFarmerName}', ${sale.amount_of_sale})" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 flex items-center gap-1">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                        Add to Cart
+                      </button>
+                    </td>
+                  </tr>
+                `;
+                salesTableBody.innerHTML += row;
+              });
+            }
+            salesRow.classList.remove('hidden');
+            lucide.createIcons();
+          },
+          error: function(xhr) {
+            console.error('Fetch sales error:', xhr);
+            alert(`Error fetching sales: ${xhr.responseJSON?.error || 'Unknown error'}`);
+          }
+        });
+      } else {
+        salesRow.classList.add('hidden');
+        salesTableBody.innerHTML = '';
+      }
+    }
+
+    // Add item to cart
+    function addToCart(saleId, requiredId, cropId, cropName, farmerId, farmerName, amountOfSale) {
+      console.log(`Adding to cart: saleId=${saleId}, requiredId=${requiredId}`);
+      const quantityInput = document.getElementById(`quantity-${saleId}`);
+      const quantity = parseFloat(quantityInput.value);
+
+      if (!quantity || quantity <= 0) {
+        alert('Please enter a valid quantity.');
+        return;
+      }
+
+      $.ajax({
+        url: '/add_to_cart',
+        method: 'POST',
+        data: {
+          sale_id: saleId,
+          required_id: requiredId,
+          crop_id: cropId,
+          crop_name: cropName,
+          farmer_id: farmerId,
+          farmer_name: farmerName,
+          quantity: quantity,
+          amount_of_sale: amountOfSale
+        },
+        success: function(data) {
+          console.log('Add to cart response:', data);
+          if (data.error) {
+            alert(`Error: ${data.error}`);
+          } else {
+            alert(data.message);
+            quantityInput.value = ''; // Clear input
+          }
+        },
+        error: function(xhr) {
+          console.error('Add to cart error:', xhr);
+          alert(`Error adding to cart: ${xhr.responseJSON?.error || 'Unknown error'}`);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

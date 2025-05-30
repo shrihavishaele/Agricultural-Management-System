@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Role</title>
+    <style>
+        body {
+            background-color: #c9d6ff;
+            background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .role-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .role-button {
+            background-color: #2da0a8;
+            color: #fff;
+            font-size: 16px;
+            padding: 15px 45px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .role-button:hover {
+            background-color: #248f96;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, <span id="username">User</span>!</h1>
+        <p>Select Your Role</p>
+
+        <div class="role-buttons">
+            <button class="role-button" onclick="window.location.href='./templates/buyer_dashboard.html'">Buyer</button>
+            <button class="role-button" onclick="window.location.href='./templates/dashboard.html'">Farmer</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Retrieve username from localStorage
+            const username = localStorage.getItem('username');
+            
+            // If username exists, display it
+            if (username) {
+                document.getElementById('username').textContent = username;
+            } else {
+                // If no username in localStorage, try to get it from the email
+                const userEmail = localStorage.getItem('userEmail');
+                if (userEmail) {
+                    // You could extract a name from the email or fetch from server
+                    // For now just use the part before @ as username
+                    const emailUsername = userEmail.split('@')[0];
+                    document.getElementById('username').textContent = emailUsername;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

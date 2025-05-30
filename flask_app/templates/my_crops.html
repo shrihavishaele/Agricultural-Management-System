@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Crops</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .container {
+            margin-top: 30px;
+        }
+        .table {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .table th {
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+        }
+        .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .btn-update {
+            background-color: #007bff;
+            border: none;
+            margin-right: 5px;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            border: none;
+        }
+        .form-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .form-section h2 {
+            color: #28a745;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+            border-color: #28a745;
+        }
+        .btn-add {
+            background-color: #28a745;
+            border: none;
+        }
+        .btn-add:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/farmer_dashboard">Farmer Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my_crops">My Crops</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my_inventory">My Inventory</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my_land">My Land</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my_sales">My Sales</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1 class="text-center mb-4">My Crops</h1>
+
+        <!-- Error/Success Messages -->
+        {% if error %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+        {% if message %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+
+        <!-- Crops Table -->
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Harvest ID</th>
+                        <th>Crop ID</th>
+                        <th>Crop Name</th>
+                        <th>Land ID</th>
+                        <th>Area (Acres)</th>
+                        <th>Sowing Date</th>
+                        <th>Harvest Date</th>
+                        <th>Status</th>
+                        <th>Yield</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result[0] }}</td>
+                        <td>{{ result[1] }}</td>
+                        <td>{{ result[2] }}</td>
+                        <td>{{ result[3] }}</td>
+                        <td>{{ result[4] }}</td>
+                        <td>{{ result[5] }}</td>
+                        <td>{{ result[6] }}</td>
+                        <td>{{ result[7] }}</td>
+                        <td>{{ result[8] }}</td>
+                        <td>
+                            <form action="/update_crop/{{ result[0] }}" method="POST" style="display: inline;">
+                                <input type="hidden" name="harvest_id" value="{{ result[0] }}">
+                                <input type="hidden" name="crop_name" value="{{ result[2] }}">
+                                <input type="hidden" name="land_id" value="{{ result[3] }}">
+                                <input type="hidden" name="area_used_in_acres" value="{{ result[4] }}">
+                                <input type="hidden" name="sowing_date" value="{{ result[5] }}">
+                                <input type="hidden" name="harvest_date" value="{{ result[6] }}">
+                                <input type="hidden" name="yield" value="{{ result[8] }}">
+                                <button type="submit" class="btn btn-primary btn-sm btn-update">Update</button>
+                            </form>
+                            <form action="/delete_crop/{{ result[0] }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this crop?');">
+                                <input type="hidden" name="harvest_id" value="{{ result[0] }}">
+                                <button type="submit" class="btn btn-danger btn-sm btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Crop Form -->
+        <div class="form-section">
+            <h2 class="text-center mb-4">Add New Crop</h2>
+            <form action="/add_crop" method="POST">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="crop_name" class="form-label">Crop Name:</label>
+                        <select name="crop_name" id="crop_name" class="form-control" required>
+                            {% for name in crop_names %}
+                                <option value="{{ name }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="land_id" class="form-label">Land ID:</label>
+                        <select name="land_id" id="land_id" class="form-control" required>
+                            {% for id in land_ids %}
+                                <option value="{{ id }}">{{ id }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="area_used_in_acres" class="form-label">Area Used (Acres):</label>
+                        <input type="number" step="0.1" name="area_used_in_acres" id="area_used_in_acres" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="sowing_date" class="form-label">Sowing Date:</label>
+                        <input type="date" name="sowing_date" id="sowing_date" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="harvest_date" class="form-label">Harvest Date:</label>
+                        <input type="date" name="harvest_date" id="harvest_date" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="yield" class="form-label">Initial Yield (Optional):</label>
+                        <input type="number" step="0.1" name="yield" id="yield" class="form-control">
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success btn-add">Add Crop</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Transaction History</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+  <div class="max-w-7xl mx-auto p-6 space-y-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-gray-800">Transaction History</h1>
+      <a href="{{ url_for('farmer_dashboard') }}" class="text-blue-600 hover:underline">Back to Dashboard</a>
+    </div>
+
+    <!-- Messages -->
+    {% if error %}
+      <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg">
+        <p>{{ error }}</p>
+      </div>
+    {% endif %}
+    {% if message %}
+      <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg">
+        <p>{{ message }}</p>
+      </div>
+    {% endif %}
+
+    <!-- Transactions Table -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Transactions</h2>
+      {% if transactions %}
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-200 text-gray-700">
+                <th class="p-3">Purchase ID</th>
+                <th class="p-3">Crop</th>
+                <th class="p-3">Buyer</th>
+                <th class="p-3">Quantity</th>
+                <th class="p-3">Unit</th>
+                <th class="p-3">Amount Paid ($)</th>
+                <th class="p-3">Purchase Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for trans in transactions %}
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">{{ trans.purchase_id }}</td>
+                  <td class="p-3">{{ trans.crop_name }}</td>
+                  <td class="p-3">{{ trans.buyer_name }}</td>
+                  <td class="p-3">{{ trans.quantity | float | round(2) }}</td>
+                  <td class="p-3">{{ trans.unit }}</td>
+                  <td class="p-3">{{ trans.amount_paid | float | round(2) }}</td>
+                  <td class="p-3">{{ trans.purchase_date }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-gray-600">No transactions found.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

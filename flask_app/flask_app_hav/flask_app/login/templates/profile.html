@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Farmer Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 20px; /* Increase font size */
+            margin: 20px;
+            padding: 0;
+        }
+        h1 {
+            font-size: 36px; /* Larger heading */
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
+            font-size: 22px; /* Larger table font */
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 22px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Farmer Profile</h1>
+    {% if farmer %}
+    <ul>
+        <li><strong>Farmer ID:</strong> {{ farmer[0] }}</li>
+        <li><strong>Name:</strong> {{ farmer[1] }}</li>
+        <li><strong>Email ID:</strong> {{ farmer[2] }}</li>
+        <li><strong>Address:</strong> {{ farmer[3] }}</li>
+        <li><strong>Contact No:</strong> {{ farmer[4] }}</li>
+    </ul>
+    {% else %}
+        <p>Farmer details not found.</p>
+    {% endif %}
+    <br>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+</body>
+</html>

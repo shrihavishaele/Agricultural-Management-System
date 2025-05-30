@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ 'Farmer' if session['role'] == 'farmer' else 'Buyer' }} Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center font-sans">
+  <div class="bg-white shadow-md rounded-2xl p-8 max-w-md w-full space-y-6">
+    <h1 class="text-3xl font-bold text-gray-800 text-center">
+      {{ 'Farmer' if session['role'] == 'farmer' else 'Buyer' }} Login / Signup
+    </h1>
+
+    <!-- Error Message -->
+    {% if error %}
+      <p class="text-red-600 bg-red-100 rounded-lg p-3 text-center">{{ error }}</p>
+    {% endif %}
+
+    <!-- Login Form -->
+    <form action="/login" method="POST" class="space-y-4">
+      <input type="hidden" name="role" value="{{ session['role'] }}">
+      <div>
+        <label class="block text-gray-700 font-medium">Email</label>
+        <input type="email" name="email" class="w-full p-2 border rounded" placeholder="Enter your email" required>
+      </div>
+      <div>
+        <label class="block text-gray-700 font-medium">Password</label>
+        <input type="password" name="password" class="w-full p-2 border rounded" placeholder="Enter your password" required>
+      </div>
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
+    </form>
+
+    <!-- Signup Form -->
+    <div class="border-t pt-4">
+      <h2 class="text-lg font-semibold text-gray-800 text-center">New User? Sign Up</h2>
+      <form action="/register" method="POST" class="space-y-4">
+        <input type="hidden" name="role" value="{{ session['role'] }}">
+        <div>
+          <label class="block text-gray-700 font-medium">Name</label>
+          <input type="text" name="name" class="w-full p-2 border rounded" placeholder="Enter your name" required>
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium">Email</label>
+          <input type="email" name="email" class="w-full p-2 border rounded" placeholder="Enter your email" required>
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium">Password</label>
+          <input type="password" name="password" class="w-full p-2 border rounded" placeholder="Enter your password" required>
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium">Contact Number</label>
+          <input type="text" name="contact" class="w-full p-2 border rounded" placeholder="Enter your contact number" required>
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium">Address</label>
+          <input type="text" name="address" class="w-full p-2 border rounded" placeholder="Enter your address">
+        </div>
+        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Sign Up</button>
+      </form>
+    </div>
+
+    <!-- Back to Role Selection -->
+    <a href="/" class="block text-blue-600 hover:underline text-center">← Back to Role Selection</a>
+  </div>
+</body>
+</html>

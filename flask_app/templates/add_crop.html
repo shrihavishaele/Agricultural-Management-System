@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Crop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+    <h2 class="text-2xl font-bold text-green-700 mb-6 text-center">Add Crop Details</h2>
+    <form method="POST">
+      <div class="mb-4">
+        <label class="block text-gray-700">Crop Name</label>
+        <input type="text" name="crop_name" required class="w-full mt-2 p-2 border border-gray-300 rounded" />
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700">Land ID</label>
+        <input type="number" name="land_id" required class="w-full mt-2 p-2 border border-gray-300 rounded" />
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700">Sowing Date</label>
+        <input type="date" name="sowing_date" required class="w-full mt-2 p-2 border border-gray-300 rounded" />
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-gray-700">Harvest Date</label>
+        <input type="date" name="harvest_date" required class="w-full mt-2 p-2 border border-gray-300 rounded" />
+      </div>
+
+      <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">Add Crop</button>
+    </form>
+  </div>
+</body>
+</html>

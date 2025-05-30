@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+  <div class="max-w-7xl mx-auto p-6 space-y-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-gray-800">Your Cart</h1>
+      <a href="/purchase" class="text-blue-600 hover:underline">Continue Shopping</a>
+    </div>
+
+    <!-- Messages -->
+    {% if error %}
+      <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg">
+        <p>{{ error }}</p>
+      </div>
+    {% endif %}
+    {% if message %}
+      <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg">
+        <p>{{ message }}</p>
+      </div>
+    {% endif %}
+
+    <!-- Cart Items Table -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Cart Items</h2>
+      {% if cart_items %}
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-200 text-gray-700">
+                <th class="p-3">Sale ID</th>
+                <th class="p-3">Crop</th>
+                <th class="p-3">Farmer</th>
+                <th class="p-3">Quantity</th>
+                <th class="p-3">Unit</th>
+                <th class="p-3">Price ($)</th>
+                <th class="p-3">Total ($)</th>
+                <th class="p-3">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in cart_items %}
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">{{ item.sale_id }}</td>
+                  <td class="p-3">{{ item.crop_name }}</td>
+                  <td class="p-3">{{ item.farmer_name }}</td>
+                  <td class="p-3">{{ item.quantity | float | round(2) }}</td>
+                  <td class="p-3">{{ item.unit }}</td>
+                  <td class="p-3">{{ item.amount_of_sale | float | round(2) }}</td>
+                  <td class="p-3">{{ item.amount_of_sale | float | round(2) }}</td>
+                  <td class="p-3">
+                    <button onclick="deleteCartItem({{ item.sale_id }})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 flex items-center gap-1">
+                      <i data-lucide="trash-2" class="w-4 h-4"></i>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <!-- Total Amount -->
+        <div class="mt-4 flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-gray-800">Total Amount:</h3>
+          <p class="text-lg font-bold text-gray-800">${{ total_amount | float | round(2) }}</p>
+        </div>
+        <!-- Proceed to Payment -->
+        <form action="/proceed_payment" method="POST" class="mt-6">
+          <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 flex items-center justify-center gap-2">
+            <i data-lucide="credit-card" class="w-5 h-5"></i>
+            Proceed to Payment
+          </button>
+        </form>
+      {% else %}
+        <p class="text-gray-600">Your cart is empty. <a href="/purchase" class="text-blue-600 hover:underline">Add items</a>.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Delete cart item
+    function deleteCartItem(saleId) {
+      if (!confirm('Are you sure you want to remove this item from the cart?')) return;
+      $.ajax({
+        url: `/delete_cart_item/${saleId}`,
+        method: 'POST',
+        success: function(data) {
+          if (data.error) {
+            alert(`Error: ${data.error}`);
+          } else {
+            alert(data.message);
+            location.reload(); // Refresh to update cart
+          }
+        },
+        error: function(xhr) {
+          alert(`Error deleting item: ${xhr.responseJSON?.error || 'Unknown error'}`);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

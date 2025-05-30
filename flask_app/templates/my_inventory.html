@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Inventory</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { color: green; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #666; padding: 8px; text-align: left; }
+        th { background-color: #cde; }
+        .button-container { margin-top: 20px; }
+        a, button { display: inline-block; padding: 10px 20px; margin-bottom: 10px; text-decoration: none; color: white; background-color: #4CAF50; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        a:hover, button:hover { background-color: #45a049; }
+        .edit-button { background-color: #007BFF; padding: 6px 12px; font-size: 14px; margin-right: 5px; }
+        .edit-button:hover { background-color: #0056b3; }
+        .delete-button { background-color: #dc3545; padding: 6px 12px; font-size: 14px; }
+        .delete-button:hover { background-color: #c82333; }
+        .save-button { background-color: #28a745; padding: 6px 12px; font-size: 14px; margin-right: 5px; }
+        .save-button:hover { background-color: #218838; }
+        .cancel-button { background-color: #6c757d; padding: 6px 12px; font-size: 14px; }
+        .cancel-button:hover { background-color: #5a6268; }
+        input[type="text"], input[type="date"], input[type="number"], select { padding: 5px; width: 100%; box-sizing: border-box; border: 1px solid #444; border-radius: 4px; font-size: 14px; }
+        .editable { display: none; }
+        .view-mode .editable { display: none; }
+        .edit-mode .editable { display: block; }
+        .view-mode .viewable { display: block; }
+        .edit-mode .viewable { display: none; }
+        .add-inventory-form { display: none; border: 1px solid #ddd; padding: 20px; margin-top: 20px; border-radius: 4px; background-color: #f9f9f9; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .bottom-container { margin-top: 20px; }
+        .message { color: green; margin-bottom: 10px; }
+        .error { color: red; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>My Inventory</h1>
+
+    {% if message %}
+        <p class="message">{{ message }}</p>
+    {% endif %}
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if data %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Maintains ID</th>
+                    <th>Inventory ID</th>
+                    <th>Inventory Name</th>
+                    <th>Market Bought From</th>
+                    <th>Purchase Date</th>
+                    <th>Expiry Date</th>
+                    <th>Quantity Present</th>
+                    <th>Minimum Quantity</th>
+                    <th>Validity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                    <tr class="view-mode" id="row-{{ row[0] }}">
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                        <td>
+                            <span class="viewable">{{ row[2] }}</span>
+                            <span class="editable">
+                                <select name="inventory_name" required>
+                                    <option value="Fertilizer NPK" {% if row[2] == 'Fertilizer NPK' %}selected{% endif %}>Fertilizer NPK</option>
+                                    <option value="Pesticide X-40" {% if row[2] == 'Pesticide X-40' %}selected{% endif %}>Pesticide X-40</option>
+                                    <option value="Tractor Fuel" {% if row[2] == 'Tractor Fuel' %}selected{% endif %}>Tractor Fuel</option>
+                                    <option value="Wheat Seeds A1" {% if row[2] == 'Wheat Seeds A1' %}selected{% endif %}>Wheat Seeds A1</option>
+                                    <option value="Rice Seeds R99" {% if row[2] == 'Rice Seeds R99' %}selected{% endif %}>Rice Seeds R99</option>
+                                    <option value="Organic Compost" {% if row[2] == 'Organic Compost' %}selected{% endif %}>Organic Compost</option>
+                                    <option value="Insecticide B50" {% if row[2] == 'Insecticide B50' %}selected{% endif %}>Insecticide B50</option>
+                                    <option value="Maize Seeds M30" {% if row[2] == 'Maize Seeds M30' %}selected{% endif %}>Maize Seeds M30</option>
+                                    <option value="Potato Seeds PS5" {% if row[2] == 'Potato Seeds PS5' %}selected{% endif %}>Potato Seeds PS5</option>
+                                    <option value="Irrigation Pipes" {% if row[2] == 'Irrigation Pipes' %}selected{% endif %}>Irrigation Pipes</option>
+                                    <option value="Harvester Parts" {% if row[2] == 'Harvester Parts' %}selected{% endif %}>Harvester Parts</option>
+                                    <option value="Cotton Seeds C12" {% if row[2] == 'Cotton Seeds C12' %}selected{% endif %}>Cotton Seeds C12</option>
+                                    <option value="Cotton Seeds C13" {% if row[2] == 'Cotton Seeds C13' %}selected{% endif %}>Cotton Seeds C13</option>
+                                </select>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="viewable">{{ row[3] }}</span>
+                            <span class="editable">
+                                <select name="market" required>
+                                    <option value="Green Valley Market" {% if row[3] == 'Green Valley Market' %}selected{% endif %}>Green Valley Market</option>
+                                    <option value="Farmers Central" {% if row[3] == 'Farmers Central' %}selected{% endif %}>Farmers Central</option>
+                                    <option value="Rural Supplies" {% if row[3] == 'Rural Supplies' %}selected{% endif %}>Rural Supplies</option>
+                                    <option value="AgriMart" {% if row[3] == 'AgriMart' %}selected{% endif %}>AgriMart</option>
+                                    <option value="Harvest Depot" {% if row[3] == 'Harvest Depot' %}selected{% endif %}>Harvest Depot</option>
+                                    <option value="Farm Essential Store" {% if row[3] == 'Farm Essential Store' %}selected{% endif %}>Farm Essential Store</option>
+                                    <option value="Seeds & More" {% if row[3] == 'Seeds & More' %}selected{% endif %}>Seeds & More</option>
+                                    <option value="Country Market" {% if row[3] == 'Country Market' %}selected{% endif %}>Country Market</option>
+                                    <option value="Agricultural Hub" {% if row[3] == 'Agricultural Hub' %}selected{% endif %}>Agricultural Hub</option>
+                                    <option value="Village Supplies" {% if row[3] == 'Village Supplies' %}selected{% endif %}>Village Supplies</option>
+                                    <option value="Farm Equipment Center" {% if row[3] == 'Farm Equipment Center' %}selected{% endif %}>Farm Equipment Center</option>
+                                    <option value="Crop Market" {% if row[3] == 'Crop Market' %}selected{% endif %}>Crop Market</option>
+                                    <option value="Brack Area" {% if row[3] == 'Brack Area' %}selected{% endif %}>Brack Area</option>
+                                </select>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="viewable">{{ row[4] }}</span>
+                            <span class="editable">
+                                <input type="date" name="purchase_date" value="{{ row[4] }}" required>
+                            </span>
+                        </td>
+                        <td>
+                            {% if row[5] is none %}
+                                N/A
+                            {% else %}
+                                {{ row[5] }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="viewable">{{ row[6] }}</span>
+                            <span class="editable">
+                                <input type="number" name="quantity_present" value="{{ row[6] }}" required>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="viewable">{{ row[7] }}</span>
+                            <span class="editable">
+                                <input type="number" name="min_quantity" value="{{ row[7] }}" required>
+                            </span>
+                        </td>
+                        <td>{{ row[8] }}</td>
+                        <td>
+                            <span class="viewable">
+                                <button class="edit-button" type="button" onclick="toggleEditMode('row-{{ row[0] }}')">Edit</button>
+                                <form action="/delete_inventory/{{ row[0] }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this inventory item?');">
+                                    <button class="delete-button" type="submit">Delete</button>
+                                </form>
+                            </span>
+                            <span class="editable">
+                                <form action="/update_inventory/{{ row[0] }}" method="POST" style="display:inline;">
+                                    <input type="hidden" name="inventory_name" value="{{ row[2] }}">
+                                    <input type="hidden" name="market" value="{{ row[3] }}">
+                                    <input type="hidden" name="purchase_date" value="{{ row[4] }}">
+                                    <input type="hidden" name="quantity_present" value="{{ row[6] }}">
+                                    <input type="hidden" name="min_quantity" value="{{ row[7] }}">
+                                    <button class="save-button" type="submit">Save</button>
+                                </form>
+                                <button class="cancel-button" type="button" onclick="toggleEditMode('row-{{ row[0] }}')">Cancel</button>
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No inventory items found for this farmer.</p>
+    {% endif %}
+
+    <div class="button-container">
+        <button onclick="toggleAddInventoryForm()">Add Inventory</button>
+    </div>
+
+    <div class="add-inventory-form" id="addInventoryForm">
+        <h2>Add New Inventory Item</h2>
+        <form action="/add_inventory" method="POST">
+            <div class="form-group">
+                <label for="inventory_name">Inventory Name:</label>
+                <select id="inventory_name" name="inventory_name" required>
+                    <option value="" disabled selected>Select an inventory item</option>
+                    <option value="Fertilizer NPK">Fertilizer NPK</option>
+                    <option value="Pesticide X-40">Pesticide X-40</option>
+                    <option value="Tractor Fuel">Tractor Fuel</option>
+                    <option value="Wheat Seeds A1">Wheat Seeds A1</option>
+                    <option value="Rice Seeds R99">Rice Seeds R99</option>
+                    <option value="Organic Compost">Organic Compost</option>
+                    <option value="Insecticide B50">Insecticide B50</option>
+                    <option value="Maize Seeds M30">Maize Seeds M30</option>
+                    <option value="Potato Seeds PS5">Potato Seeds PS5</option>
+                    <option value="Irrigation Pipes">Irrigation Pipes</option>
+                    <option value="Harvester Parts">Harvester Parts</option>
+                    <option value="Cotton Seeds C12">Cotton Seeds C12</option>
+                    <option value="Cotton Seeds C13">Cotton Seeds C13</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="market">Market Bought From:</label>
+                <select id="market" name="market" required>
+                    <option value="" disabled selected>Select a market</option>
+                    <option value="Green Valley Market">Green Valley Market</option>
+                    <option value="Farmers Central">Farmers Central</option>
+                    <option value="Rural Supplies">Rural Supplies</option>
+                    <option value="AgriMart">AgriMart</option>
+                    <option value="Harvest Depot">Harvest Depot</option>
+                    <option value="Farm Essential Store">Farm Essential Store</option>
+                    <option value="Seeds & More">Seeds & More</option>
+                    <option value="Country Market">Country Market</option>
+                    <option value="Agricultural Hub">Agricultural Hub</option>
+                    <option value="Village Supplies">Village Supplies</option>
+                    <option value="Farm Equipment Center">Farm Equipment Center</option>
+                    <option value="Crop Market">Crop Market</option>
+                    <option value="Brack Area">Brack Area</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="purchase_date">Purchase Date:</label>
+                <input type="date" id="purchase_date" name="purchase_date" required>
+            </div>
+            <div class="form-group">
+                <label for="quantity_present">Quantity Present:</label>
+                <input type="number" id="quantity_present" name="quantity_present" required>
+            </div>
+            <div class="form-group">
+                <label for="min_quantity">Minimum Quantity:</label>
+                <input type="number" id="min_quantity" name="min_quantity" required>
+            </div>
+            <button type="submit" onclick="this.disabled=true; this.form.submit();">Save Inventory</button>
+            <button type="button" class="cancel-button" onclick="toggleAddInventoryForm()">Cancel</button>
+        </form>
+    </div>
+
+    <div class="bottom-container">
+        <a href="/farmer_dashboard">Back to Dashboard</a>
+    </div>
+
+    <script>
+        document.getElementById('addInventoryForm').style.display = 'none';
+        
+        function toggleEditMode(rowId) {
+            const row = document.getElementById(rowId);
+            if (row.classList.contains('view-mode')) {
+                row.classList.remove('view-mode');
+                row.classList.add('edit-mode');
+                // Copy values to hidden inputs when entering edit mode
+                const inventoryName = row.querySelector('td:nth-child(3) .viewable').textContent;
+                const market = row.querySelector('td:nth-child(4) .viewable').textContent;
+                const purchaseDate = row.querySelector('td:nth-child(5) .viewable').textContent;
+                const quantityPresent = row.querySelector('td:nth-child(7) .viewable').textContent;
+                const minQuantity = row.querySelector('td:nth-child(8) .viewable').textContent;
+                row.querySelector('td:nth-child(10) .editable form input[name="inventory_name"]').value = inventoryName;
+                row.querySelector('td:nth-child(10) .editable form input[name="market"]').value = market;
+                row.querySelector('td:nth-child(10) .editable form input[name="purchase_date"]').value = purchaseDate;
+                row.querySelector('td:nth-child(10) .editable form input[name="quantity_present"]').value = quantityPresent;
+                row.querySelector('td:nth-child(10) .editable form input[name="min_quantity"]').value = minQuantity;
+            } else {
+                row.classList.remove('edit-mode');
+                row.classList.add('view-mode');
+            }
+        }
+
+        function toggleAddInventoryForm() {
+            const form = document.getElementById('addInventoryForm');
+            form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

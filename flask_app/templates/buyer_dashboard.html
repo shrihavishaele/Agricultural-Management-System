@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Buyer Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+  <div class="max-w-4xl mx-auto p-6 space-y-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-gray-800">Buyer Dashboard</h1>
+      <div class="flex items-center gap-4">
+        <a href="/cart" class="flex items-center" aria-label="View Cart">
+          <i data-lucide="shopping-cart" class="w-6 h-6 text-blue-600"></i>
+        </a>
+        <a href="/logout" class="text-blue-600 hover:underline">Logout</a>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    {% if error %}
+      <p class="text-red-600 bg-white rounded-2xl shadow-lg p-4">{{ error }}</p>
+    {% endif %}
+
+    <!-- Buyer Profile -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-6">Buyer Profile</h2>
+      <div class="space-y-6 text-gray-800">
+        {% if buyer %}
+          <p><strong>Buyer ID:</strong> {{ buyer[0] }}</p>
+          <p><strong>Name:</strong> {{ buyer[1] }}</p>
+          <p><strong>Email:</strong> {{ buyer[2] }}</p>
+          <p><strong>Contact No:</strong> {{ buyer[3] }}</p>
+          <p><strong>Address:</strong> {{ buyer[4] }}</p>
+        {% else %}
+          <p class="text-yellow-600">No buyer details found. Please contact support to resolve this issue.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="grid grid-cols-2 gap-4">
+      <a href="/purchase">
+        <button class="w-full bg-blue-600 text-white text-lg py-4 rounded-xl shadow-md hover:bg-blue-700 transition-all">
+          🛒 Want to Purchase
+        </button>
+      </a>
+      <a href="/buyer_transaction">
+        <button class="w-full bg-green-600 text-white text-lg py-4 rounded-xl shadow-md hover:bg-green-700 transition-all">
+          📄 Transaction History
+        </button>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9356f8f9e8c0c428',t:'MTc0NTUxMjA5My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>
